@@ -1,0 +1,41 @@
+{
+  "name": "@momsfriendlydevco/testa",
+  "version": "1.0.0",
+  "description": "Stupidly simple test harness designed for parallel running",
+  "type": "module",
+  "bin": {
+    "testa": "./lib/app.js"
+  },
+  "scripts": {
+    "test": "testa"
+  },
+  "keywords": [
+    "test",
+    "testkit"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MomsFriendlyDevCo/Testa.git"
+  },
+  "bugs": {
+    "url": "https://github.com/MomsFriendlyDevCo/Testa/issues"
+  },
+  "homepage": "https://github.com/MomsFriendlyDevCo/Testa#readme",
+  "author": "Matt Carter <m@ttcarter.com>",
+  "license": "MIT",
+  "engineStrict": true,
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "imports": {
+    "#testa": "./lib/testa.js",
+    "#testa/*": "./lib/*.js"
+  },
+  "exports": {
+    ".": "./lib/testa.js"
+  },
+  "dependencies": {
+    "chai": "^6.2.0",
+    "commander": "^14.0.1"
+  }
+}
