@@ -1,7 +1,9 @@
 import {styleText} from 'node:util';
+import UIReport from './report.js';
 
 export default async function TestaUIBdd({TestaBase}) {
 	let testSubset; // Subset of tests we are running
+	let failed = []; // Eventual array of failed tests
 
 	/**
 	* Output helper
@@ -30,21 +32,13 @@ export default async function TestaUIBdd({TestaBase}) {
 					] : []),
 				]);
 			},
-			onTestRejected: (test, err) => {
-				log('result', [
-					styleText(['bold', 'red'], '✖'),
-					styleText('red', test.toString()),
-					...(msg ? [
-						msg,
-					] : []),
-				]);
-			},
 			onTestRejected: test => {
 				log('result', [
 					styleText(['bold', 'red'], '✖'),
 					styleText('red', test.toString()),
 					styleText(['bold', 'red'], '(timeout)'),
 				]);
+				failed.push(test);
 			},
 			onTestResolved: test => {
 				log('result', [
@@ -52,9 +46,16 @@ export default async function TestaUIBdd({TestaBase}) {
 					test.toString(),
 				]);
 			},
+			onTestTimeout: test => {
+				log('result', [
+					styleText(['bold', 'yellow'], '⏱'),
+					styleText('yellow', test.toString()),
+					styleText(['bold', 'yellow'], '(timeout)'),
+				]);
+			},
 			onTestSkipped: (test, msg) => {
 				log('result', [
-					styleText(['bold', 'cyan'], '⤼'),
+					styleText(['bold', 'cyan'], '↷'),
 					styleText('cyan', test.toString()),
 					styleText(['bold', 'cyan'], '(skipped)'),
 					...(msg ? [
@@ -63,6 +64,7 @@ export default async function TestaUIBdd({TestaBase}) {
 				]);
 			},
 		}))
+		.then(()=> UIReport({TestaBase, failed}))
 		.then(stats => log('footer', [ // Report stats
 			'Finished testing with',
 			styleText(['bold', 'green'], ''+stats.resolved),
