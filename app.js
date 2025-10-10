@@ -17,6 +17,7 @@ let args = program
 	.option('-f, --fgrep <expression>', 'Add a raw string expression filter for tests titles + IDs (can be specified multiple times)', (v, t) => t.concat([v]), [])
 	.option('--slow [timestring]', 'Set the amount of time before a test is considered slow to resolve. Can be any valid timestring', '75ms')
 	.option('--timeout [timestring]', 'Set the amount of time before a test times out. Can be any valid timestring', '2s')
+	.option('--ui [ui]', 'Set the UI environment to use', 'bdd')
 	.option('--debug', 'Turn on various internal debugging output')
 	.parse(process.argv);
 
@@ -61,5 +62,6 @@ await Promise.all(
 	)
 );
 
-// Run all queued tests
-await TestaBase.execAll();
+// Load the UI
+let {default: ui} = await import(`./ui/${args.ui}.js`);
+await ui({TestaBase});
