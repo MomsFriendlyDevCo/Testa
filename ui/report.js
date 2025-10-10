@@ -4,13 +4,15 @@ import {styleText} from 'node:util';
 * Testa UI output that is also designed to simply report on already run tests
 *
 * @param {Object} context The UI context
-* @param {TestaBase} TestaBase The root TestaBase instance
-* @param {Array<Testa>} [failed] Optional, pre-existing array of failed tests. If provided `execAll()` is skipped
+* @param {TestaBase} context.TestaBase The root TestaBase instance
+* @param {Array<Testa>} [context.failed] Optional, pre-existing array of failed tests. If provided `execAll()` is skipped
 *
-* @param {Object} [options] Additional options to mutate behaviour
-* @param {Boolean} [options.paddingTop] Add a line space at the top of the report
-* @param {Boolean} [options.paddingBetween] Add a line space between items
-* @param {Boolean} [options.paddingBottom] Add a line space at the bottom of the report
+* @param {Object} [context.options] Additional options to mutate behaviour
+* @param {Boolean} [context.options.paddingTop] Add a line space at the top of the report
+* @param {Boolean} [context.options.paddingBetween] Add a line space between items
+* @param {Boolean} [context.options.paddingBottom] Add a line space at the bottom of the report
+*
+* @returns {Promise} A promise which resolves when the operation has completed
 */
 export default async function TestaUIFancy({TestaBase, failed, options}) {
 	let settings = {

@@ -1,4 +1,4 @@
-import {test, expect} from '#testa';
+import test from '#testa';
 
 test('wait 1s', t =>
 	t.wait('1s')

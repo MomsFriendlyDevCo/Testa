@@ -1,14 +1,23 @@
 import {styleText} from 'node:util';
 import UIReport from './report.js';
 
+
+/**
+* Testa BDD UI
+*
+* @param {TestaBase} TestaBase Root TestaBase instance to use
+* @returns {Promise} A promise which resolves when the operation has completed
+*/
 export default async function TestaUIBdd({TestaBase}) {
 	let testSubset; // Subset of tests we are running
 	let failed = []; // Eventual array of failed tests
 
 	/**
 	* Output helper
+	*
 	* @param {'header'|'footer'|'result'} type The formatting type to apply
-	* @param {*} [...msg] Items to output, falsy items are removed
+	* @param {*...} [msg] Items to output, falsy items are removed
+	* @returns {Void}
 	*/
 	let log = (type, msg) => console.log(...[
 		...(

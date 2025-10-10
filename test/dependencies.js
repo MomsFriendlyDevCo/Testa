@@ -1,8 +1,6 @@
 import {test, expect} from '#testa';
 
-let hasBaz = false;
 test.id('baz').depends('bar').do(t => {
-	hasBaz = true;
 	expect(hasBar).to.be.true;
 	t.log('Baz!');
 });

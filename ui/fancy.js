@@ -1,6 +1,13 @@
 import Listr from 'listr';
 import UIReport from './report.js';
 
+
+/**
+* Testa Fancy UI
+*
+* @param {TestaBase} TestaBase Root TestaBase instance to use
+* @returns {Promise} A promise which resolves when the operation has completed
+*/
 export default async function TestaUIFancy({TestaBase}) {
 	let listr; // Eventual Listr instance, created when onTests() resolves
 	let failed = []; // Eventual array of failed tests
@@ -38,7 +45,7 @@ export default async function TestaUIFancy({TestaBase}) {
 				test.resolvers.resolve();
 			},
 			onTestSkipped: (test, msg) => {
-				task.listrTask.skip(msg);
+				test.listrTask.skip(msg);
 			},
 		}))
 		.then(()=> UIReport({TestaBase, failed}))

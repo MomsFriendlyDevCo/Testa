@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import {glob} from 'node:fs/promises';
-import {join as pathJoin} from 'node:path';
+import {join as pathJoin} from 'node:path'; // eslint-disable-line unicorn/import-style
 import {program} from 'commander'
 import TestaBase from '#testa/base';
 
