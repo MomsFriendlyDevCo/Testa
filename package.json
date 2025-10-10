@@ -37,6 +37,7 @@
   "dependencies": {
     "chai": "^6.2.0",
     "commander": "^14.0.1",
-    "p-graph": "^1.2.0"
+    "p-graph": "^1.2.0",
+    "timestring": "^7.0.0"
   }
 }

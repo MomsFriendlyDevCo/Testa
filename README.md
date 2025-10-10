@@ -32,6 +32,13 @@ Returns the chainable instance.
 Used to specify depdendencies or refer to tests.
 
 
+Testa.location(file:String, line:Number)
+----------------------------------------
+Indicate the location of the test.
+This is automatically populated when using the `testa` bin.
+Returns the chainable instance.
+
+
 Testa.handler(handler:Function)
 -------------------------------
 Specify the test worker function.
@@ -61,12 +68,25 @@ Mark a test for skipping, these will not be run but marked as skipped when loggi
 Returns the chainable instance.
 
 
+Testa.only()
+------------
+Mark a test for 'only' inclusion. Unless overriden these will be the only tests run.
+Returns the chainable instance.
+
+
 Testa.priority(level:Number|String)
-----------------------------
+-----------------------------------
 Set the priority order of a function.
-Level can be a number (higher numbers run first) or a meta string such as 'BEFORE', 'BEFORE-EACH', 'AFTER', 'AFTER-EACH'.
+Level can be a number (higher numbers run first) or a meta string such as 'BEFORE', 'AFTER'
 Returns the chainable instance.
 The `before()` and `after()` functions are really just aliases of `test.priority('BEFORE', ...)`
+
+
+Testa.depends(...String)
+------------------------
+Set a pre-dependency for a test.
+This marked test will not run less the dependency has run and successfully resolved first.
+Returns the chainable instance.
 
 
 Testa.before()
@@ -78,6 +98,20 @@ Returns the chainable instance.
 Testa.after()
 -------------
 Alias for `test().priority('AFTER', ...)`
+Returns the chainable instance.
+
+
+Testa.slow(timing:String|Number)
+--------------------------------
+Set the amount of time before a test is considered slow to resolve.
+Can be a raw millisecond time or any valid timestring.
+Returns the chainable instance.
+
+
+Testa.timeout(timing:String|Number)
+-----------------------------------
+Set the amount of time before a test should timeout.
+Can be a raw millisecond time or any valid timestring.
 Returns the chainable instance.
 
 
