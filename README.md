@@ -143,3 +143,9 @@ TestaContext.skip(...msg:Any)
 ----------------------------
 Notify that a test was skipped and indicate why.
 Returns the chainable `TestaContext` instance.
+
+
+TestaContext.wait(delay:Number|String)
+--------------------------------------
+Wrapper around timestring() + setTimeout() to wait for an arbitrary amount of time.
+Returns a promise which will resolve when the delay has elapsed.
