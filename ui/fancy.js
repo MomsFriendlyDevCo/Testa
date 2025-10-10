@@ -21,7 +21,11 @@ export default async function TestaUIFancy({TestaBase}) {
 							task.listrTask = task;
 							return test.resolvers.promise;
 						},
-					}))
+					})),
+					{
+						concurrent: true, // Handled upstream anyway
+						exitOnError: false, // Don't die if something fails
+					},
 				);
 
 				listr.run();
