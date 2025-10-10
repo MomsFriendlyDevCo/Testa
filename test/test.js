@@ -1,4 +1,4 @@
-import {test, expect} from '#testa';
+import test, {expect} from '#testa';
 
 test('simple test', ()=> {
 	expect(1).to.be.ok;
