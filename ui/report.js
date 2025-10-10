@@ -5,7 +5,7 @@ import {styleText} from 'node:util';
 *
 * @param {Object} context The UI context
 * @param {TestaBase} context.TestaBase The root TestaBase instance
-* @param {Array<Testa>} [context.failed] Optional, pre-existing array of failed tests. If provided `execAll()` is skipped
+* @param {Array<TestaTest>} [context.failed] Optional, pre-existing array of failed tests. If provided `execAll()` is skipped
 *
 * @param {Object} [context.options] Additional options to mutate behaviour
 * @param {Boolean} [context.options.paddingTop] Add a line space at the top of the report
