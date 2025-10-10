@@ -73,7 +73,10 @@ export default async function TestaUIBdd({TestaBase}) {
 				]);
 			},
 		}))
-		.then(()=> UIReport({TestaBase, failed}))
+		.then(async (stats) => {
+			await UIReport({TestaBase, failed});
+			return stats;
+		})
 		.then(stats => log('footer', [ // Report stats
 			'Finished testing with',
 			styleText(['bold', 'green'], ''+stats.resolved),
