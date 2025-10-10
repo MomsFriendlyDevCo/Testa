@@ -15,6 +15,8 @@ let args = program
 	.option('-l, --limit <number>', 'Set number of tests to run in parallel', 5)
 	.option('-g, --grep <expression>', 'Add a grep expression filter for tests titles + IDs (can be specified multiple times)', (v, t) => t.concat([v]), [])
 	.option('-f, --fgrep <expression>', 'Add a raw string expression filter for tests titles + IDs (can be specified multiple times)', (v, t) => t.concat([v]), [])
+	.option('--slow [timestring]', 'Set the amount of time before a test is considered slow to resolve. Can be any valid timestring', '75ms')
+	.option('--timeout [timestring]', 'Set the amount of time before a test times out. Can be any valid timestring', '2s')
 	.option('--debug', 'Turn on various internal debugging output')
 	.parse(process.argv);
 
@@ -28,6 +30,8 @@ if (args.serial) Object.assign(args, {limit: 1});
 TestaBase.concurrency = args.limit;
 TestaBase.debug = !! args.debug;
 TestaBase.bail = !! args.bail;
+TestaBase.slow = args.slow;
+TestaBase.timeout = args.timeout;
 if (args.grep.length > 0) TestaBase.filters = TestaBase.filters.concat(
 	args.grep.map(g => test => {
 		let re = new RegExp(g, 'i');
