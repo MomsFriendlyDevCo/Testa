@@ -5,18 +5,22 @@ export default async function TestaUIBdd({TestaBase}) {
 
 	/**
 	* Output helper
+	* @param {'header'|'footer'|'result'} type The formatting type to apply
 	* @param {*} [...msg] Items to output, falsy items are removed
 	*/
-	let log = msg => console.log(
-		styleText(['bold', 'blue'], '[TESTA]'),
-		...msg.filter(Boolean)
-	);
+	let log = (type, msg) => console.log(...[
+		...(
+			type == 'header' || type == 'footer' ? [styleText(['bgBlue', 'white', 'bold'], '[TESTA]')]
+			: ['  ']
+		),
+		...msg,
+	].filter(Boolean));
 
 	return Promise.resolve()
 		.then(()=> TestaBase.execAll({
 			onTests: tests => { // Run all queued tests
 				testSubset = tests;
-				log([
+				log('header', [
 					'Going to run',
 					tests.length,
 					'tests',
@@ -27,7 +31,7 @@ export default async function TestaUIBdd({TestaBase}) {
 				]);
 			},
 			onTestRejected: (test, err) => {
-				log([
+				log('result', [
 					styleText(['bold', 'red'], '✖'),
 					styleText('red', test.toString()),
 					...(msg ? [
@@ -36,20 +40,20 @@ export default async function TestaUIBdd({TestaBase}) {
 				]);
 			},
 			onTestRejected: test => {
-				log([
+				log('result', [
 					styleText(['bold', 'red'], '✖'),
 					styleText('red', test.toString()),
 					styleText(['bold', 'red'], '(timeout)'),
 				]);
 			},
 			onTestResolved: test => {
-				log([
+				log('result', [
 					styleText(['bold', 'green'], '✔'),
 					test.toString(),
 				]);
 			},
 			onTestSkipped: (test, msg) => {
-				log([
+				log('result', [
 					styleText(['bold', 'cyan'], '⤼'),
 					styleText('cyan', test.toString()),
 					styleText(['bold', 'cyan'], '(skipped)'),
@@ -59,7 +63,7 @@ export default async function TestaUIBdd({TestaBase}) {
 				]);
 			},
 		}))
-		.then(stats => log([ // Report stats
+		.then(stats => log('footer', [ // Report stats
 			'Finished testing with',
 			styleText(['bold', 'green'], ''+stats.resolved),
 			'resolved and',
