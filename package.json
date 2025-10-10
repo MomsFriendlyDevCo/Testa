@@ -7,6 +7,7 @@
     "testa": "./lib/app.js"
   },
   "scripts": {
+    "lint": "eslint",
     "test": "testa"
   },
   "keywords": [
@@ -40,5 +41,9 @@
     "listr": "^0.14.3",
     "p-graph": "^1.2.0",
     "timestring": "^7.0.0"
+  },
+  "devDependencies": {
+    "@momsfriendlydevco/eslint-config": "^2.3.1",
+    "eslint": "^9.37.0"
   }
 }
