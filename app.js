@@ -11,9 +11,10 @@ let args = program
 	.name('testa')
 	.description('Run testkits in parallel with dependencies')
 	.argument('[files...]')
+	.option('-l, --list', 'List all queued tests and exit')
 	.option('-b, --bail', 'Stop processing on the first error')
 	.option('-s, --serial', 'Force run tests in serial (alias of `--limit 1`)')
-	.option('-l, --limit <number>', 'Set number of tests to run in parallel', 5)
+	.option('-p, --parallel <number>', 'Set number of tests to run in parallel', 5)
 	.option('-g, --grep <expression>', 'Add a grep expression filter for tests titles + IDs (can be specified multiple times)', (v, t) => t.concat([v]), [])
 	.option('-f, --fgrep <expression>', 'Add a raw string expression filter for tests titles + IDs (can be specified multiple times)', (v, t) => t.concat([v]), [])
 	.option('--slow [timestring]', 'Set the amount of time before a test is considered slow to resolve. Can be any valid timestring', '75ms')
@@ -28,8 +29,8 @@ args = { // Flatten into POJO of option keys + `args:Array<String>`
 };
 
 // Populate options
-if (args.serial) Object.assign(args, {limit: 1});
-TestaBase.concurrency = args.limit;
+if (args.serial) Object.assign(args, {parallel: 1});
+TestaBase.concurrency = args.parallel;
 TestaBase.debug = !! args.debug;
 TestaBase.bail = !! args.bail;
 TestaBase.slow = args.slow;
@@ -63,6 +64,15 @@ await Promise.all(
 	)
 );
 
-// Load the UI
-let {default: ui} = await import(`./ui/${args.ui}.js`);
-await ui({TestaBase});
+if (args.list) { // LIST MODE - List tests and exit
+	console.log('Testa Tests:');
+	TestaBase.tests.forEach(test => {
+		console.log('-', test.toString());
+	});
+	process.exit(0);
+} else { // RUN MODE - Actually run tests
+	// Load the UI
+	let {default: ui} = await import(`./ui/${args.ui}.js`);
+	await ui({TestaBase});
+	process.exit(0);
+}
