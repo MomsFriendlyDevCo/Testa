@@ -35,18 +35,27 @@ TestaBase.debug = !! args.debug;
 TestaBase.bail = !! args.bail;
 TestaBase.slow = args.slow;
 TestaBase.timeout = args.timeout;
-if (args.grep.length > 0) TestaBase.filters = TestaBase.filters.concat(
-	args.grep.map(g => test => {
+if (args.grep.length > 0) {
+	args.grep.forEach(g => {
 		let re = new RegExp(g, 'i');
-		return re.test(test._name) || re.test(test._id);
-	})
-);
-if (args.fgrep.length > 0) TestaBase.filters = TestaBase.filters.concat(
-	args.fgrep.map(g => test => {
+		if (TestaBase.debug) console.log('Using test grep filter:', re.toString());
+
+		TestaBase.filters.push(test =>
+			re.test(test._id) || re.test(test._title)
+		);
+	});
+}
+
+if (args.fgrep.length > 0) {
+	args.fgrep.forEach(g => {
 		let re = new RegExp(regexpEscape(g), 'i');
-		return re.test(test._name) || re.test(test._id);
-	})
-);
+		if (TestaBase.debug) console.log('Using test grep filter:', re.toString());
+
+		TestaBase.filters.push(test =>
+			re.test(test._id) || re.test(test._title)
+		);
+	});
+}
 
 // Calculate what files to import
 let testFiles = args.args.length > 0
