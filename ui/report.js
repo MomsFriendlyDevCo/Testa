@@ -8,14 +8,18 @@ import {styleText} from 'node:util';
 * @param {Array<TestaTest>} [context.failed] Optional, pre-existing array of failed tests. If provided `execAll()` is skipped
 *
 * @param {Object} [context.options] Additional options to mutate behaviour
-* @param {Boolean} [context.options.paddingTop] Add a line space at the top of the report
-* @param {Boolean} [context.options.paddingBetween] Add a line space between items
-* @param {Boolean} [context.options.paddingBottom] Add a line space at the bottom of the report
+* @param {Boolean} [context.options.border=true] Add a horizontal line above the report area
+* @param {Boolean} [context.options.paddingBorder=true] Add a line space before the border line
+* @param {Boolean} [context.options.paddingTop=true] Add a line space at the top of the report (this occurs after the border)
+* @param {Boolean} [context.options.paddingBetween=true] Add a line space between items
+* @param {Boolean} [context.options.paddingBottom=true] Add a line space at the bottom of the report
 *
 * @returns {Promise} A promise which resolves when the operation has completed
 */
 export default async function TestaUIFancy({TestaBase, failed, options}) {
 	let settings = {
+		border: true,
+		paddingBorder: true,
 		paddingTop: true,
 		paddingBetween: true,
 		paddingBottom: true,
@@ -36,6 +40,9 @@ export default async function TestaUIFancy({TestaBase, failed, options}) {
 			}
 		})
 		.then(tests => {
+			if (settings.paddingBorder) console.log();
+			if (settings.border) console.log(styleText('grey', '┄').repeat(process.stdout.columns));
+
 			if (settings.paddingTop) console.log();
 			tests.forEach(test => {
 				console.log(
