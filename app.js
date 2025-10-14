@@ -3,6 +3,7 @@
 import {glob} from 'node:fs/promises';
 import {join as pathJoin} from 'node:path'; // eslint-disable-line unicorn/import-style
 import {program} from 'commander'
+import {regexpEscape} from './lib/utils.js';
 import TestaBase from '#testa/base';
 
 // Parse Command line
@@ -41,7 +42,7 @@ if (args.grep.length > 0) TestaBase.filters = TestaBase.filters.concat(
 );
 if (args.fgrep.length > 0) TestaBase.filters = TestaBase.filters.concat(
 	args.fgrep.map(g => test => {
-		let re = new RegExp(RegExp.escape(g), 'i');
+		let re = new RegExp(regexpEscape(g), 'i');
 		return re.test(test._name) || re.test(test._id);
 	})
 );
