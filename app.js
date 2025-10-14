@@ -1,4 +1,6 @@
-#!/usr/bin/env node
+#!/bin/sh
+":" //# comment; exec /usr/bin/env node --no-warnings "$0" "$@"
+// ^^^ Horrible kludge to get Node to STFU about experiemental feature warnings
 
 import {glob} from 'node:fs/promises';
 import {join as pathJoin} from 'node:path'; // eslint-disable-line unicorn/import-style
