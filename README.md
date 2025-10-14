@@ -1,14 +1,17 @@
 @MomsFriendlyDevCo/Testa
 ========================
-Simple, parrallel-first testkit harness with dependencies and a Mocha like UI, updated for 2025.
+Simple, parrallel-first testkit harness with test dependencies and a Mocha like UI, updated for 2025.
 
 
 **Another goddamned test library, why**
 Yes it seems annoying that we're adding to an existing well-trodden ground of test kits here but I was frustraited at some lacking features, namely:
 
 1. No testkit seems to be able to do pre-dependencies correctly - what if one test requires another first. Its common to login or negociated Auth credentials first, why is the only way to do this screwing around with `before()` blocks?
-2. No testkit I've seen puts parrallelism first and foremost rather than an afterthought. This library is all about parallel with serial functionality as a secondary choice
-3. `beforeEach()` / `afterEach()` are anti-patterns and should not be supported - especially when we are doing things in parallel
+2. No testkit I've seen puts parrallelism first and foremost rather than an afterthought. This library is all about parallel with serial functionality as a secondary choice.
+3. Context is outdated - arrow functions should be universal when declaring tests, no need to differenciate between `test(()=> {})` and `test(function() {})` contexts, just accept a universal context as an argument and work from there.
+4. `beforeEach()` / `afterEach()` are anti-patterns and should not be supported - especially when we are doing things in parallel.
+5. Give reasons when using `.skip()` - why can't we say _why_ a test was skipped?
+6. `chai` / `expect()` should ship as standard - yes choice is nice but if thats what everyone uses anyway...
 
 
 
