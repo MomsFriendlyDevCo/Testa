@@ -35,6 +35,7 @@ TestaBase.debug = !! args.debug;
 TestaBase.bail = !! args.bail;
 TestaBase.slow = args.slow;
 TestaBase.timeout = args.timeout;
+// Process --grep [expr] {{{
 if (args.grep.length > 0) {
 	args.grep.forEach(g => {
 		let re = new RegExp(g, 'i');
@@ -45,7 +46,8 @@ if (args.grep.length > 0) {
 		);
 	});
 }
-
+// }}}
+// Process --fgrep [str] {{{
 if (args.fgrep.length > 0) {
 	args.fgrep.forEach(g => {
 		let re = new RegExp(regexpEscape(g), 'i');
@@ -56,6 +58,7 @@ if (args.fgrep.length > 0) {
 		);
 	});
 }
+// }}}
 
 // Calculate what files to import
 let testFiles = args.args.length > 0
