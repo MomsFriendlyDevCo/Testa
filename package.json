@@ -4,7 +4,7 @@
   "description": "Stupidly simple test harness designed for parallel running",
   "type": "module",
   "bin": {
-    "testa": "./lib/app.js"
+    "testa": "./app.js"
   },
   "scripts": {
     "lint": "eslint",
