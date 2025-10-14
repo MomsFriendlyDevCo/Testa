@@ -78,9 +78,11 @@ await Promise.all(
 
 if (args.list) { // LIST MODE - List tests and exit
 	console.log('Testa Tests:');
-	TestaBase.tests.forEach(test => {
-		console.log('-', test.toString());
-	});
+	TestaBase.
+		getFiltered()
+		.forEach(test => {
+			console.log('-', test.toString());
+		});
 	process.exit(0);
 } else { // RUN MODE - Actually run tests
 	// Load the UI
