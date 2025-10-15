@@ -7,44 +7,65 @@ import {styleText} from 'node:util';
 * @param {TestaBase} context.TestaBase The root TestaBase instance
 * @param {Array<TestaTest>} [context.failed] Optional, pre-existing array of failed tests. If provided `execAll()` is skipped
 *
-* @param {Object} [context.options] Additional options to mutate behaviour
-* @param {Boolean} [context.options.border=true] Add a horizontal line above the report area
+* @param {Object} [context.options] Additional options to mutate behaviour. Some settings can accept a Boolean or `err` (only perform if there are failed tests) or `no-err` (the inverse)
+* @param {Boolean|'err'|'no-err'} [context.options.border='err'] Add a horizontal line above the report area
 * @param {Boolean} [context.options.paddingBorder=true] Add a line space before the border line
-* @param {Boolean} [context.options.paddingTop=true] Add a line space at the top of the report (this occurs after the border)
+* @param {Boolean|'err'|'no-err'} [context.options.paddingTop='err'] Add a line space at the top of the report (this occurs after the border)
 * @param {Boolean} [context.options.paddingBetween=true] Add a line space between items
-* @param {Boolean} [context.options.paddingBottom=true] Add a line space at the bottom of the report
+* @param {Boolean|'err'|'no-err'} [context.options.paddingBottom='err'] Add a line space at the bottom of the report
 *
 * @returns {Promise} A promise which resolves when the operation has completed
 */
 export default async function TestaUIFancy({TestaBase, failed, options}) {
 	let settings = {
-		border: true,
+		border: 'err',
 		paddingBorder: true,
-		paddingTop: true,
+		paddingTop: 'err',
 		paddingBetween: true,
 		paddingBottom: true,
 		...options,
 	};
 
+	let failedTests; // Eventual array of tests that failed
+
+	/**
+	* Helper function to perform a callback if the settings is literal boolean `true` or if the settings is `err` + the are any failed tests
+	* This is used by various formatting settings like `border` + `paddingBorder` to determine if those UI elements should be added
+	*
+	* @param {Boolean|'err'} setting Setting to examine
+	* @param {Function} action The callback action to run if the conditions are satisfied
+	*/
+	let selectiveAction = (setting, action) => {
+		if (
+			setting === true
+			|| (setting == 'err' && failedTests.length > 0)
+			|| (setting == 'no-err' && failedTests.length == 0)
+		) {
+			action();
+		}
+	};
+
 	return Promise.resolve()
 		.then(()=> {
 			if (failed) {
-				return failed;
+				failedTests = failed;
 			} else { // No pre-existing list - collect
-				let failedTests = [];
 				return TestaBase.execAll({
 					onTestRejected: test => failedTests.push(test),
 					onTestTimeout: test => failedTests.push(test),
 				})
-					.then(()=> failedTests)
 			}
 		})
-		.then(tests => {
-			if (settings.paddingBorder) console.log();
-			if (settings.border) console.log(styleText('grey', '┄').repeat(process.stdout.columns));
+		.then(()=> {
+			selectiveAction(settings.border, ()=> { // Add UI border?
+				if (settings.paddingBorder) console.log();
 
-			if (settings.paddingTop) console.log();
-			tests.forEach(test => {
+				console.log(styleText('grey', '┄').repeat(process.stdout.columns));
+			});
+
+			selectiveAction(settings.paddingTop, ()=> console.log()); // Add top padding?
+
+			failedTests.forEach(test => {
 				console.log(
 					styleText(['bold', 'red'], test.toString('id||location'))
 						+ '. '
@@ -54,8 +75,10 @@ export default async function TestaUIFancy({TestaBase, failed, options}) {
 						: ''
 				);
 				console.log(test._error);
+
 				if (settings.paddingBetween) console.log();
 			});
-			if (settings.paddingBottom) console.log();
+
+			selectiveAction(settings.paddingBottom, ()=> console.log()); // Add bottom padding?
 		});
 }
