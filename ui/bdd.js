@@ -86,6 +86,7 @@ export default async function TestaUIBdd({TestaBase}) {
 					'  ',
 					styleText(['bold', 'green'], '✔'),
 					test.toString(),
+					styleText(['bold', 'green'], '(ok)'),
 				);
 			},
 			onTestTimeout: test => {
