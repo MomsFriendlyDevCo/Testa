@@ -1,17 +1,126 @@
 @MomsFriendlyDevCo/Testa
 ========================
-Simple, parrallel-first testkit harness with test dependencies and a Mocha like UI, updated for 2025.
+Low-overhead, parrallel-first testkit harness with dependencies and a Mocha like UI updated for ESM.
+
+```javascript
+import test from '@momsfriendlydevco/testa';
+
+test('simple test', ()=> {
+	test.expect(1).to.be.ok;
+	test.expect(1).to.be.a('number');
+});
 
 
-**Another goddamned test library, why**
-Yes it seems annoying that we're adding to an existing well-trodden ground of test kits here but I was frustraited at some lacking features, namely:
+// Setup tests using a chainable syntax
+test('auth').id('auth').do(()=>
+    fetch('https://acme.com/auth', {
+        method: 'POST',
+        headers: {
+			Authentication: `Bearer ${config.authToken}`,
+        },
+    })
+);
 
-1. No testkit seems to be able to do pre-dependencies correctly - what if one test requires another first. Its common to login or negociated Auth credentials first, why is the only way to do this screwing around with `before()` blocks?
+
+// Apply dependencies
+test('ping')
+    .depends('auth') // Wait for the above auth test to complete before we run this
+    .slow('30s') // Mark test as running slow if it takes >= 30 seconds
+    .timeout('1m') // ... and time it out at 1 minute
+    .do(async ()=> {
+        /* ... */
+    })
+
+
+// Split multi-step processes up into stages
+test('fetch entities', async t => {
+
+    t.stage('fetch users');
+    let users = await (await fetch('https://acme.com/api/users')).json();
+    t.log('there are', users.length, 'in the system'); // Output suplemental information during a test
+
+    t.stage('fetch projects');
+    let projects = await (await fetch('https://acme.com/api/projects')).json();
+
+    if (projects.length == 0)
+        t.warn('no projects in system'); // Warn about things without exiting
+
+    t.dump(users); // Dump complex information flows to temporary files to be examined later
+
+    if (projects.length == 0 && users.length == 0)
+        return t.skip('need at least 1 user + 1 project to run test'); // Skip out and say why
+
+});
+
+
+// Usual shortcut syntax applies
+test('foo')
+    .skip('TODO: Not yet ready') // Dont actually run this, and optionally say why
+    .do(()=> /* ... */)
+
+test('foo').only(()=> /* ... */) // Mark that only this test should run
+
+test.before(()=> /* ... */) // Setup a test to run before everything else
+
+test.after(()=> /* ... */) // Setup a test to run after everything else
+
+test.priority(50).do(()=> /* ... */) // Or use priority levels (higher runs first)
+```
+
+
+CLI
+---
+Install into a project with `npm i @momsfriendlydevco/testa` or run as `npx @momsfriendlydevco/testa`.
+
+```
+Usage: testa [options] [files...]
+
+Run testkits in parallel with dependencies
+
+Options:
+  -l, --list                       List all queued tests and exit
+  -b, --bail                       Stop processing on the first error
+  -s, --serial                     Force run tests in serial (alias of `--limit
+                                   1`)
+  -p, --parallel <number>          Set number of tests to run in parallel
+                                   (default: 5)
+  -g, --grep <expression>          Add a grep expression filter for tests titles
+                                   + IDs (can be specified multiple times)
+                                   (default: [])
+  -G, --invert-grep <expression>   Add an inverted grep expression filter for
+                                   tests titles + IDs (can be specified multiple
+                                   times) (default: [])
+  -f, --fgrep <expression>         Add a raw string expression filter for tests
+                                   titles + IDs (can be specified multiple
+                                   times) (default: [])
+  -F, --invert-fgrep <expression>  Add an inverted raw string expression filter
+                                   for tests titles + IDs (can be specified
+                                   multiple times) (default: [])
+  --slow [timestring]              Set the amount of time before a test is
+                                   considered slow to resolve. Can be any valid
+                                   timestring (default: "75ms")
+  --timeout [timestring]           Set the amount of time before a test times
+                                   out. Can be any valid timestring (default:
+                                   "2s")
+  --ui [ui]                        Set the UI environment to use (default:
+                                   "bdd")
+  --debug                          Turn on various internal debugging output
+  -h, --help                       display help for command
+```
+
+
+Reasons
+-------
+**Another goddamned test library, good god, why**
+
+Yes it seems annoying that I'm adding to an existing well-trodden ground of testkits here but I was frustraited at some lacking features, namely:
+
+1. No testkit seems to be able to do pre-dependencies correctly - what if one test requires another first? Its common to login or negociate Auth credentials for some test units, why is the only way to do this screwing around with `before()` blocks or nesting tests?
 2. No testkit I've seen puts parrallelism first and foremost rather than an afterthought. This library is all about parallel with serial functionality as a secondary choice.
-3. Context is outdated - arrow functions should be universal when declaring tests, no need to differenciate between `test(()=> {})` and `test(function() {})` contexts, just accept a universal context as an argument and work from there.
+3. Context is outdated - arrow functions should be universal when declaring tests, no need to differenciate between `test(()=> {})` and `test(function() {})` contexts, just accept a universal context as an argument and work from there. This makes stuff like using `t.timeout()` or `t.skip()` much easier without having to care about a "strong" function context rather than arrow functions.
 4. `beforeEach()` / `afterEach()` are anti-patterns and should not be supported - especially when we are doing things in parallel.
-5. Give reasons when using `.skip()` - why can't we say _why_ a test was skipped?
-6. `chai` / `expect()` should ship as standard - yes choice is nice but if thats what everyone uses anyway...
+5. Why can't we say _why_ a test was skipped with `.skip()`?
+6. `chai` / `expect()` should ship as standard - yes choice is nice but if thats what everyone uses anyway why bother adding another dependency + import header.
 7. Tests should support sub-stages (see `TestaContext.stage()`) to clearly denote where in a long-running or complex test we are up to
 8. Tests should be able to easily dump information for inspection without just spewing to the console (see `TestContext.dump()`)
 
@@ -23,6 +132,20 @@ API
 test(title:String, handler:Function)
 ------------------------------------
 The main test instanciator. Returns a `Testa` class instance.
+
+
+test.expect()
+-------------
+Utility function which exposes a `chai#expect` function.
+
+```javascript
+import test from '@momsfriendlydevco/testa';
+
+test('simple test', ()=> {
+	test.expect(1).to.be.ok;
+	test.expect(1).to.be.a('number');
+});
+```
 
 
 Testa
