@@ -69,13 +69,19 @@ export default async function TestaUIFancy({TestaBase, failed, options}) {
 
 			failedTests.forEach(test => {
 				console.log(
-					styleText(['bold', 'red'], test.toString('id||location'))
+					styleText(['bold', 'red'], test.toString('id'))
 						+ '. '
 						+ styleText('red', test.toString('title')),
 					test._status == 'rejected' ? styleText(['bold', 'red'], '(failed)')
 						: test._status == 'timeout' ? styleText(['bold', 'yellow'], '(timeout)')
 						: ''
 				);
+
+				if (test._location)
+					console.log(
+						styleText('grey', '@ ' + test.toString('location'))
+					);
+
 				console.log(cleanError(test._error));
 
 				if (settings.paddingBetween) console.log();
