@@ -1,5 +1,5 @@
 import {styleText} from 'node:util';
-import {cleanError} from '../lib/utils.js';
+import {cleanError, formatSize} from '../lib/utils.js';
 
 /**
 * Testa UI output that is also designed to simply report on already run tests
@@ -68,6 +68,7 @@ export default async function TestaUIFancy({TestaBase, failed, options}) {
 			selectiveAction(settings.paddingTop, ()=> console.log()); // Add top padding?
 
 			failedTests.forEach(test => {
+				// Header line - show ID + name + (reason)
 				console.log(
 					styleText(['bold', 'red'], test.toString('id'))
 						+ '. '
@@ -77,9 +78,20 @@ export default async function TestaUIFancy({TestaBase, failed, options}) {
 						: ''
 				);
 
+				// Output location sub-header if we have one
 				if (test._location)
 					console.log(
 						styleText('grey', '@ ' + test.toString('location'))
+					);
+
+				// Output test artefacts if we have any
+				if (test._dumps.length > 0)
+					test._dumps.forEach((dump, dumpOffset) =>
+						console.log(
+							styleText(['italic', 'cyan'], `ARTEFACT #${dumpOffset+1}`),
+							dump.path,
+							styleText('grey', '(' + formatSize(dump.size) + ')'),
+						)
 					);
 
 				console.log(cleanError(test._error));
