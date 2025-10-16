@@ -1,3 +1,4 @@
+import {cleanError} from '../lib/utils.js';
 import {styleText} from 'node:util';
 import UIReport from './report.js';
 
@@ -69,13 +70,14 @@ export default async function TestaUIBdd({TestaBase}) {
 					styleText('cyan', '• ' + msg.join(' ')),
 				);
 			},
-			onTestRejected: test => {
+			onTestRejected: (test, msg) => {
 				console.log(
 					'  ',
 					styleText(['bold', 'red'], '✖'),
 					styleText('red', test.toString()),
 					styleText(['bold', 'red'], '(timeout)'),
 				);
+				console.log('  ', cleanError(msg, {indent: '    '}));
 				failed.push(test);
 			},
 			onTestResolved: test => {

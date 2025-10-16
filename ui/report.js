@@ -1,4 +1,5 @@
 import {styleText} from 'node:util';
+import {cleanError} from '../lib/utils.js';
 
 /**
 * Testa UI output that is also designed to simply report on already run tests
@@ -45,6 +46,7 @@ export default async function TestaUIFancy({TestaBase, failed, options}) {
 		}
 	};
 
+
 	return Promise.resolve()
 		.then(()=> {
 			if (failed) {
@@ -74,7 +76,7 @@ export default async function TestaUIFancy({TestaBase, failed, options}) {
 						: test._status == 'timeout' ? styleText('yellow', '(timeout)')
 						: ''
 				);
-				console.log(test._error);
+				console.log(cleanError(test._error));
 
 				if (settings.paddingBetween) console.log();
 			});
