@@ -110,10 +110,12 @@ if (args.list) { // LIST MODE - List tests and exit
 		.forEach(test => {
 			console.log('-', test.toString());
 		});
-	process.exit(0);
+	process.exitCode = 0;
 } else { // RUN MODE - Actually run tests
 	// Load the UI
 	let {default: ui} = await import(`./ui/${args.ui}.js`);
 	await ui({TestaBase});
-	process.exit(0);
+	process.exitCode = 0;
 }
+
+// NOTE: We wait for promises to resolve before gracefully exiting
