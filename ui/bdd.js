@@ -47,6 +47,7 @@ export default async function TestaUIBdd({TestaBase}) {
 						'non-filtered)',
 					] : []),
 				].filter(Boolean));
+				console.log();
 			},
 			onTestLog: (test, msg) => {
 				checkTestHeader(test);
