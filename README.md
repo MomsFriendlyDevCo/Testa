@@ -12,6 +12,8 @@ Yes it seems annoying that we're adding to an existing well-trodden ground of te
 4. `beforeEach()` / `afterEach()` are anti-patterns and should not be supported - especially when we are doing things in parallel.
 5. Give reasons when using `.skip()` - why can't we say _why_ a test was skipped?
 6. `chai` / `expect()` should ship as standard - yes choice is nice but if thats what everyone uses anyway...
+7. Tests should support sub-stages (see `TestaContext.stage()`) to clearly denote where in a long-running or complex test we are up to
+8. Tests should be able to easily dump information for inspection without just spewing to the console (see `TestContext.dump()`)
 
 
 
@@ -139,6 +141,26 @@ Context object passed as the functional context + the only argument to all test 
 TestaContext.log(...msg:Any)
 ----------------------------
 Log some test output.
+Returns the chainable `TestaContext` instance.
+
+
+TestaContext.warn(...msg:Any)
+-----------------------------
+Log some test output as a warning but don't exit the test.
+Returns the chainable `TestaContext` instance.
+
+
+TestaContext.dump(...msg:Any)
+-----------------------------
+Log some arbitrary output and continue the test.
+This is designed mainly for large complex objects which may need to be disected seperately.
+Returns the chainable `TestaContext` instance.
+
+
+TestaContext.stage(...msg:Any)
+------------------------------
+Signal that we are at a specific sub-stage within a test function.
+In most cases this acts as a bookmark.
 Returns the chainable `TestaContext` instance.
 
 
