@@ -1,6 +1,7 @@
 import {cleanError} from '../lib/utils.js';
 import {styleText} from 'node:util';
 import UIReport from './report.js';
+import UIStats from './stats.js';
 
 
 /**
@@ -107,38 +108,6 @@ export default async function TestaUIBdd({TestaBase}) {
 				].filter(Boolean));
 			},
 		}))
-		.then(async (stats) => {
-			await UIReport({TestaBase, failed});
-			return stats;
-		})
-		.then(stats => console.log(...[ // Report stats
-			styleText(['bgBlue', 'white', 'bold'], '[TESTA]'),
-			'Finished testing with',
-			styleText(['bold', 'green'], ''+stats.resolved),
-			'resolved and',
-			styleText(stats.rejected > 0 ? ['bold', 'red'] : ['bold', 'white'], ''+stats.rejected),
-			'rejected',
-			...(stats.skipped > 0 ? [
-				'with',
-				styleText(['bold', 'yellow'], ''+stats.skipped),
-				'skipped',
-			] : []),
-			...(stats.timeout > 0 ? [
-				'with',
-				styleText(['bold', 'red'], ''+stats.timeout),
-				'timed out',
-			] : []),
-			...(stats.slow > 0 ? [
-				'of which',
-				styleText(['bold', 'yellow'], ''+stats.slow),
-				'are slow',
-			] : []),
-			'from',
-			styleText(['bold', 'yellow'], ''+testSubset.length),
-			'total tests',
-			...(testSubset.length != TestaBase.tests.length ? [
-				'(' + styleText(['bold', 'yellow'], ''+TestaBase.tests.length),
-				'non-filtered)',
-			] : []),
-		].filter(Boolean)))
+		.then(()=> UIReport({TestaBase, failed}))
+		.then(()=> UIStats({TestaBase}))
 }

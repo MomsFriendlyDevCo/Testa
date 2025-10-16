@@ -65,4 +65,5 @@ export default async function TestaUIFancy({TestaBase}) {
 			},
 		}))
 		.then(()=> UIReport({TestaBase, failed}))
+		.then(()=> UIStats({TestaBase}))
 }
