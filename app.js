@@ -18,7 +18,9 @@ let args = program
 	.option('-s, --serial', 'Force run tests in serial (alias of `--limit 1`)')
 	.option('-p, --parallel <number>', 'Set number of tests to run in parallel', 5)
 	.option('-g, --grep <expression>', 'Add a grep expression filter for tests titles + IDs (can be specified multiple times)', (v, t) => t.concat([v]), [])
+	.option('-G, --invert-grep <expression>', 'Add an inverted grep expression filter for tests titles + IDs (can be specified multiple times)', (v, t) => t.concat([v]), [])
 	.option('-f, --fgrep <expression>', 'Add a raw string expression filter for tests titles + IDs (can be specified multiple times)', (v, t) => t.concat([v]), [])
+	.option('-F, --invert-fgrep <expression>', 'Add an inverted raw string expression filter for tests titles + IDs (can be specified multiple times)', (v, t) => t.concat([v]), [])
 	.option('--slow [timestring]', 'Set the amount of time before a test is considered slow to resolve. Can be any valid timestring', '75ms')
 	.option('--timeout [timestring]', 'Set the amount of time before a test times out. Can be any valid timestring', '2s')
 	.option('--ui [ui]', 'Set the UI environment to use', 'bdd')
@@ -32,31 +34,54 @@ args = { // Flatten into POJO of option keys + `args:Array<String>`
 
 // Populate options
 if (args.serial) Object.assign(args, {parallel: 1});
+TestaBase.basePath = process.cwd();
 TestaBase.concurrency = args.parallel;
 TestaBase.debug = !! args.debug;
 TestaBase.bail = !! args.bail;
 TestaBase.slow = args.slow;
 TestaBase.timeout = args.timeout;
-// Process --grep [expr] {{{
+// Process --grep [expr] / --invert-grep [expr] {{{
 if (args.grep.length > 0) {
 	args.grep.forEach(g => {
 		let re = new RegExp(g, 'i');
-		if (TestaBase.debug) console.log('Using test grep filter:', re.toString());
+		if (TestaBase.debug) console.log('Using test Grep filter:', re.toString());
 
 		TestaBase.filters.push(test =>
 			re.test(test._id) || re.test(test._title)
 		);
 	});
 }
+
+if (args.invertGrep.length > 0) {
+	args.invertGrep.forEach(g => {
+		let re = new RegExp(g, 'i');
+		if (TestaBase.debug) console.log('Using test Inverted Grep filter:', re.toString());
+
+		TestaBase.filters.push(test =>
+			!re.test(test._id) && !re.test(test._title)
+		);
+	});
+}
 // }}}
-// Process --fgrep [str] {{{
+// Process --fgrep [str] / --invert-fgrep {{{
 if (args.fgrep.length > 0) {
 	args.fgrep.forEach(g => {
 		let re = new RegExp(regexpEscape(g), 'i');
-		if (TestaBase.debug) console.log('Using test grep filter:', re.toString());
+		if (TestaBase.debug) console.log('Using test Fgrep filter:', re.toString());
 
 		TestaBase.filters.push(test =>
 			re.test(test._id) || re.test(test._title)
+		);
+	});
+}
+
+if (args.invertFgrep.length > 0) {
+	args.invertFgrep.forEach(g => {
+		let re = new RegExp(regexpEscape(g), 'i');
+		if (TestaBase.debug) console.log('Using test Inverted Fgrep filter:', re.toString());
+
+		TestaBase.filters.push(test =>
+			!re.test(test._id) && !re.test(test._title)
 		);
 	});
 }
