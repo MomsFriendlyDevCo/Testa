@@ -4,7 +4,7 @@ test('fail due to expect() logic').do(()=> {
 	expect(1).to.not.be.ok;
 });
 
-test('fail due to expect().fail').do(()=> {
+test('fail due to expect.fail()').do(()=> {
 	expect.fail();
 });
 
