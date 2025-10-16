@@ -72,8 +72,8 @@ export default async function TestaUIFancy({TestaBase, failed, options}) {
 					styleText(['bold', 'red'], test.toString('id||location'))
 						+ '. '
 						+ styleText('red', test.toString('title')),
-					test._status == 'rejected' ? styleText('red', '(failed)')
-						: test._status == 'timeout' ? styleText('yellow', '(timeout)')
+					test._status == 'rejected' ? styleText(['bold', 'red'], '(failed)')
+						: test._status == 'timeout' ? styleText(['bold', 'yellow'], '(timeout)')
 						: ''
 				);
 				console.log(cleanError(test._error));
