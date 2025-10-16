@@ -8,7 +8,10 @@ import {styleText} from 'node:util';
 */
 export default async function TestaUIStats({TestaBase, options}) {
 	let settings = {
-		paddingTop: 'err',
+		paddingTop: true,
+		paddingExtrasTop: true,
+		paddingExtrasBottom: true,
+		paddingBottom: true,
 		...options,
 	};
 
@@ -18,34 +21,43 @@ export default async function TestaUIStats({TestaBase, options}) {
 				return TestaBase.execAll();
 			}
 		})
-		.then(()=> console.log(...[ // Report TestaBase.stats
+		.then(()=> console.log(
 			styleText(['bgBlue', 'white', 'bold'], '[TESTA]'),
 			'Finished testing with',
 			styleText(['bold', 'green'], ''+TestaBase.stats.resolved),
 			'resolved and',
 			styleText(TestaBase.stats.rejected > 0 ? ['bold', 'red'] : ['bold', 'white'], ''+TestaBase.stats.rejected),
 			'rejected',
-			...(TestaBase.stats.skipped > 0 ? [
-				'with',
-				styleText(['bold', 'yellow'], ''+TestaBase.stats.skipped),
-				'skipped',
-			] : []),
-			...(TestaBase.stats.timeout > 0 ? [
-				'with',
-				styleText(['bold', 'red'], ''+TestaBase.stats.timeout),
-				'timed out',
-			] : []),
-			...(TestaBase.stats.slow > 0 ? [
-				'of which',
-				styleText(['bold', 'yellow'], ''+TestaBase.stats.slow),
-				'are slow',
-			] : []),
-			'from',
-			styleText(['bold', 'yellow'], ''+TestaBase.stats.run),
+		))
+		.then(()=> settings.paddingTop && console.log())
+		.then(()=> settings.paddingExtrasTop && (TestaBase.stats.skipped || TestaBase.stats.timeout || TestaBase.stats.slow || TestaBase.stats.run != TestaBase.stats.total) && console.log())
+		.then(()=> TestaBase.stats.skipped > 0 && console.log(
+			'  •',
+			styleText(['bold', 'cyan'], ''+TestaBase.stats.skipped),
+			'skipped',
+		))
+		.then(()=> TestaBase.stats.timeout > 0 && console.log(
+			'  •',
+			styleText(['bold', 'yellow'], ''+TestaBase.stats.timeout),
+			'timed out',
+		))
+		.then(()=> TestaBase.stats.slow > 0 && console.log(
+			'  •',
+			styleText(['bold', 'cyan'], ''+TestaBase.stats.slow),
+			'are slow',
+		))
+		.then(()=> TestaBase.stats.run != TestaBase.stats.total && console.log(
+			'  • filtered to',
+			styleText('white', ''+TestaBase.stats.run),
+			'/',
+			styleText(['bold', 'white'], ''+TestaBase.stats.total),
 			'total tests',
-			...(TestaBase.stats.run != TestaBase.stats.total ? [
-				'(' + styleText(['bold', 'yellow'], ''+TestaBase.stats.total),
-				'non-filtered)',
-			] : []),
-		].filter(Boolean)))
+		))
+		.then(()=> settings.paddingExtrasBottom && (TestaBase.stats.skipped || TestaBase.stats.timeout || TestaBase.stats.slow || TestaBase.stats.run != TestaBase.stats.total) && console.log())
+		.then(()=> settings.paddingBottom && console.log())
+		.then(()=> TestaBase.stats.rejected && console.log(
+			styleText(['bgBlue', 'white', 'bold'], '[TESTA]'),
+			styleText(['bold', 'red'], ''+TestaBase.stats.rejected),
+			'tests failed',
+		))
 }
