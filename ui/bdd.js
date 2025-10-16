@@ -12,26 +12,31 @@ export default async function TestaUIBdd({TestaBase}) {
 	let testSubset; // Subset of tests we are running
 	let failed = []; // Eventual array of failed tests
 
+
 	/**
-	* Output helper
+	* Check if a test has already output its header and if not do so
+	* This is used by intersticial events like `log()`, `warn()` & `stage()` to indicate a change to a test that has not yet completed
 	*
-	* @param {'header'|'footer'|'result'} type The formatting type to apply
-	* @param {*...} [msg] Items to output, falsy items are removed
-	* @returns {Void}
+	* @param {TestaTest} test The test being updated
 	*/
-	let log = (type, msg) => console.log(...[
-		...(
-			type == 'header' || type == 'footer' ? [styleText(['bgBlue', 'white', 'bold'], '[TESTA]')]
-			: ['  ']
-		),
-		...msg,
-	].filter(Boolean));
+	let checkTestHeader = (test) => {
+		if (!test._outputHeader) {
+			console.log(
+				'  ',
+				styleText(['bold', 'blue'], '➤'),
+				test.toString(),
+			);
+			test._outputHeader = true;
+		}
+	};
+
 
 	return Promise.resolve()
 		.then(()=> TestaBase.execAll({
 			onTests: tests => { // Run all queued tests
 				testSubset = tests;
-				log('header', [
+				console.log(...[
+					styleText(['bgBlue', 'white', 'bold'], '[TESTA]'),
 					'Going to run',
 					tests.length,
 					'tests',
@@ -39,45 +44,73 @@ export default async function TestaUIBdd({TestaBase}) {
 						'(' + styleText(['bold', 'yellow'], ''+TestaBase.tests.length),
 						'non-filtered)',
 					] : []),
-				]);
+				].filter(Boolean));
+			},
+			onTestLog: (test, msg) => {
+				checkTestHeader(test);
+				console.log(
+					'    ',
+					styleText('blue', '🛈'),
+					...msg,
+				);
+			},
+			onTestWarn: (test, msg) => {
+				checkTestHeader(test);
+				console.log(
+					'    ',
+					styleText('yellow', '🛆'),
+					...msg,
+				);
+			},
+			onTestStage: (test, msg) => {
+				checkTestHeader(test);
+				console.log(
+					'    ',
+					styleText('cyan', '• ' + msg.join(' ')),
+				);
 			},
 			onTestRejected: test => {
-				log('result', [
+				console.log(
+					'  ',
 					styleText(['bold', 'red'], '✖'),
 					styleText('red', test.toString()),
 					styleText(['bold', 'red'], '(timeout)'),
-				]);
+				);
 				failed.push(test);
 			},
 			onTestResolved: test => {
-				log('result', [
+				console.log(
+					'  ',
 					styleText(['bold', 'green'], '✔'),
 					test.toString(),
-				]);
+				);
 			},
 			onTestTimeout: test => {
-				log('result', [
+				console.log(
+					'  ',
 					styleText(['bold', 'yellow'], '⏱'),
 					styleText('yellow', test.toString()),
 					styleText(['bold', 'yellow'], '(timeout)'),
-				]);
+				);
 			},
 			onTestSkipped: (test, msg) => {
-				log('result', [
+				console.log(...[
+					'  ',
 					styleText(['bold', 'cyan'], '↷'),
-					styleText('cyan', test.toString()),
+					styleText(['cyan', 'strikethrough'], test.toString()),
 					styleText(['bold', 'cyan'], '(skipped)'),
 					...(msg ? [
 						msg,
 					] : []),
-				]);
+				].filter(Boolean));
 			},
 		}))
 		.then(async (stats) => {
 			await UIReport({TestaBase, failed});
 			return stats;
 		})
-		.then(stats => log('footer', [ // Report stats
+		.then(stats => console.log(...[ // Report stats
+			styleText(['bgBlue', 'white', 'bold'], '[TESTA]'),
 			'Finished testing with',
 			styleText(['bold', 'green'], ''+stats.resolved),
 			'resolved and',
@@ -105,5 +138,5 @@ export default async function TestaUIBdd({TestaBase}) {
 				'(' + styleText(['bold', 'yellow'], ''+TestaBase.tests.length),
 				'non-filtered)',
 			] : []),
-		]))
+		].filter(Boolean)))
 }
