@@ -75,7 +75,7 @@ export default async function TestaUIBdd({TestaBase}) {
 					'  ',
 					styleText(['bold', 'red'], '✖'),
 					styleText('red', test.toString()),
-					styleText(['bold', 'red'], '(timeout)'),
+					styleText(['bold', 'red'], '(failed)'),
 				);
 				console.log('  ', cleanError(msg, {indent: '    '}));
 				failed.push(test);
