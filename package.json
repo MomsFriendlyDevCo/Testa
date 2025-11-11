@@ -1,7 +1,7 @@
 {
   "name": "@momsfriendlydevco/testa",
   "version": "1.0.0",
-  "description": "Stupidly simple test harness designed for parallel running",
+  "description": "Low-overhead, parallel-first testkit harness",
   "type": "module",
   "bin": {
     "testa": "./app.js"
