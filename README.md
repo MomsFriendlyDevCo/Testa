@@ -1,6 +1,6 @@
 @MomsFriendlyDevCo/Testa
 ========================
-Low-overhead, parrallel-first testkit harness with dependencies and a Mocha like UI updated for ESM.
+Low-overhead, parallel-first testkit harness with dependencies and a Mocha like UI updated for ESM.
 
 ```javascript
 import test from '@momsfriendlydevco/testa';
@@ -37,7 +37,7 @@ test('fetch entities', async t => {
 
     t.stage('fetch users');
     let users = await (await fetch('https://acme.com/api/users')).json();
-    t.log('there are', users.length, 'in the system'); // Output suplemental information during a test
+    t.log('there are', users.length, 'in the system'); // Output supplemental information during a test
 
     t.stage('fetch projects');
     let projects = await (await fetch('https://acme.com/api/projects')).json();
@@ -55,7 +55,7 @@ test('fetch entities', async t => {
 
 // Usual shortcut syntax applies
 test('foo')
-    .skip('TODO: Not yet ready') // Dont actually run this, and optionally say why
+    .skip('TODO: Not yet ready') // Don't actually run this, and optionally say why
     .do(()=> /* ... */)
 
 test('foo').only(()=> /* ... */) // Mark that only this test should run
@@ -79,7 +79,8 @@ Run testkits in parallel with dependencies
 
 Options:
   -l, --list                       List all queued tests and exit
-  -b, --bail                       Stop processing on the first error
+  -b, --bail                       Stop processing on the first error (implies
+                                   `--serial`)
   -s, --serial                     Force run tests in serial (alias of `--limit
                                    1`)
   -p, --parallel <number>          Set number of tests to run in parallel
@@ -111,13 +112,13 @@ Options:
 
 Reasons
 -------
-**Another goddamned test library, good god, why**
+**Another goddamned test library, dear god, why**
 
-Yes it seems annoying that I'm adding to an existing well-trodden ground of testkits here but I was frustraited at some lacking features, namely:
+Yes it seems annoying that I'm adding to an existing well-trodden ground of testkits here but I was frustrated at some lacking features, namely:
 
-1. No testkit seems to be able to do pre-dependencies correctly - what if one test requires another first? Its common to login or negociate Auth credentials for some test units, why is the only way to do this screwing around with `before()` blocks or nesting tests?
-2. No testkit I've seen puts parrallelism first and foremost rather than an afterthought. This library is all about parallel with serial functionality as a secondary choice.
-3. Context is outdated - arrow functions should be universal when declaring tests, no need to differenciate between `test(()=> {})` and `test(function() {})` contexts, just accept a universal context as an argument and work from there. This makes stuff like using `t.timeout()` or `t.skip()` much easier without having to care about a "strong" function context rather than arrow functions.
+1. No testkit seems to be able to do pre-dependencies correctly - what if one test requires another first? Its common to login or negotiate Auth credentials for some test units, why is the only way to do this screwing around with `before()` blocks or nesting tests?
+2. No testkit I've seen puts parallelism first and foremost rather than an afterthought. This library is all about parallel with serial functionality as a secondary choice.
+3. Context is outdated - arrow functions should be universal when declaring tests, no need to differentiate between `test(()=> {})` and `test(function() {})` contexts, just accept a universal context as an argument and work from there. This makes stuff like using `t.timeout()` or `t.skip()` much easier without having to care about a "strong" function context rather than arrow functions.
 4. `beforeEach()` / `afterEach()` are anti-patterns and should not be supported - especially when we are doing things in parallel.
 5. Why can't we say _why_ a test was skipped with `.skip()`?
 6. `chai` / `expect()` should ship as standard - yes choice is nice but if thats what everyone uses anyway why bother adding another dependency + import header.
@@ -157,7 +158,7 @@ Testa.id(id:String)
 -------------------
 Specify an ID for a test.
 Returns the chainable instance.
-Used to specify depdendencies or refer to tests.
+Used to specify dependencies or refer to tests.
 
 
 Testa.location(file:String, line:Number)
@@ -198,7 +199,7 @@ Returns the chainable instance.
 
 Testa.only()
 ------------
-Mark a test for 'only' inclusion. Unless overriden these will be the only tests run.
+Mark a test for 'only' inclusion. Unless overridden these will be the only tests run.
 Returns the chainable instance.
 
 
@@ -232,14 +233,14 @@ Returns the chainable instance.
 Testa.slow(timing:String|Number)
 --------------------------------
 Set the amount of time before a test is considered slow to resolve.
-Can be a raw millisecond time or any valid timestring.
+Can be a raw millisecond time or any valid Timestring.
 Returns the chainable instance.
 
 
 Testa.timeout(timing:String|Number)
 -----------------------------------
 Set the amount of time before a test should timeout.
-Can be a raw millisecond time or any valid timestring.
+Can be a raw millisecond time or any valid Timestring.
 Returns the chainable instance.
 
 
@@ -276,7 +277,7 @@ Returns the chainable `TestaContext` instance.
 TestaContext.dump(...msg:Any)
 -----------------------------
 Log some arbitrary output and continue the test.
-This is designed mainly for large complex objects which may need to be disected seperately.
+This is designed mainly for large complex objects which may need to be dissected separately.
 Returns the chainable `TestaContext` instance.
 
 
@@ -295,5 +296,5 @@ Returns the chainable `TestaContext` instance.
 
 TestaContext.wait(delay:Number|String)
 --------------------------------------
-Wrapper around timestring() + setTimeout() to wait for an arbitrary amount of time.
+Wrapper around `timestring()` + `setTimeout()` to wait for an arbitrary amount of time.
 Returns a promise which will resolve when the delay has elapsed.
