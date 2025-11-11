@@ -44,7 +44,7 @@ export default async function TestaUIBdd({TestaBase}) {
 					'tests',
 					...(testSubset.length != TestaBase.tests.length ? [
 						'(' + styleText(['bold', 'yellow'], ''+TestaBase.tests.length),
-						'non-filtered)',
+						'total)',
 					] : []),
 				].filter(Boolean));
 				console.log();

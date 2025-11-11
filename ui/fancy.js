@@ -1,5 +1,6 @@
 import Listr from 'listr';
 import UIReport from './report.js';
+import UIStats from './stats.js';
 
 
 /**
