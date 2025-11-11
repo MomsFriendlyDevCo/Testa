@@ -14,7 +14,7 @@ let args = program
 	.description('Run testkits in parallel with dependencies')
 	.argument('[files...]')
 	.option('-l, --list', 'List all queued tests and exit')
-	.option('-b, --bail', 'Stop processing on the first error')
+	.option('-b, --bail', 'Stop processing on the first error (implies `--serial`)')
 	.option('-s, --serial', 'Force run tests in serial (alias of `--limit 1`)')
 	.option('-p, --parallel <number>', 'Set number of tests to run in parallel', 5)
 	.option('-g, --grep <expression>', 'Add a grep expression filter for tests titles + IDs (can be specified multiple times)', (v, t) => t.concat([v]), [])
@@ -33,6 +33,7 @@ args = { // Flatten into POJO of option keys + `args:Array<String>`
 };
 
 // Populate options
+if (args.bail) Object.assign(args, {serial: true});
 if (args.serial) Object.assign(args, {parallel: 1});
 TestaBase.basePath = process.cwd();
 TestaBase.concurrency = args.parallel;
