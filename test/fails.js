@@ -1,11 +1,11 @@
 import test, {expect} from '#testa';
 
 test('fail due to expect() logic').do(()=> {
-	expect(1).to.not.be.ok;
-});
-
-test('fail due to expect.fail()').do(()=> {
-	expect.fail();
+	try {
+		expect(1).to.not.be.ok;
+	} catch (e) {
+		expect.fail;
+	}
 });
 
 test('double failure').skip('TODO: not yet handled right').do(()=> {

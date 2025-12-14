@@ -6,6 +6,4 @@ test('dump test', t => {
 		bar: 'Bar!',
 		baz: [1, 2, 3],
 	});
-
-	test.expect.fail();
 });

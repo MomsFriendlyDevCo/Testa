@@ -124,6 +124,7 @@ Yes it seems annoying that I'm adding to an existing well-trodden ground of test
 6. `chai` / `expect()` should ship as standard - yes choice is nice but if thats what everyone uses anyway why bother adding another dependency + import header.
 7. Tests should support sub-stages (see `TestaContext.stage()`) to clearly denote where in a long-running or complex test we are up to
 8. Tests should be able to easily dump information for inspection without just spewing to the console (see `TestContext.dump()`)
+9. Tests can _still_ be serialized on an opt-in basis using `.serial()` - or use `--serial` to force all tests to do this
 
 
 
@@ -218,6 +219,23 @@ This marked test will not run less the dependency has run and successfully resol
 Returns the chainable instance.
 
 
+Testa.before(...String)
+-----------------------
+Alias for `Testa.depends(...string)`
+
+
+Testa.postDepends(...String)
+----------------------------
+Set a post-dependency for a test.
+This queues up a _reverse_ dependency where the named tests will execute _after_ this test.
+Returns the chainable instance.
+
+
+Testa.after(...String)
+----------------------
+Alias for `Testa.postDepends(...string)`
+
+
 Testa.before()
 --------------
 Alias for `test().priority('BEFORE', ...)`
@@ -254,6 +272,13 @@ Testa.depends(...dependency:String)
 -----------------------------------
 Adds one or more IDs as a pre-dependency before running the test. These must resolve successfully before being able to continue.
 Can be specified multiple times.
+Returns the chainable instance.
+
+
+Testa.series(isSeries?:true)
+----------------------------
+Mark this test as requiring an isolated in-series runner.
+This differs from regular tests in that its force to run in a series rather than in massive-parallel - the default Testa behaviour.
 Returns the chainable instance.
 
 
