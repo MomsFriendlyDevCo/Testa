@@ -1,6 +1,6 @@
 {
   "name": "@momsfriendlydevco/testa",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Low-overhead, parallel-first testkit harness",
   "type": "module",
   "bin": {
