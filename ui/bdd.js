@@ -59,7 +59,7 @@ export default async function TestaUIBdd({TestaBase}) {
 			},
 			onTestWarn: (test, msg) => {
 				checkTestHeader(test);
-				console.log(
+				console.warn(
 					'    ',
 					styleText('yellow', '🛆'),
 					...msg,
