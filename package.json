@@ -36,9 +36,9 @@
     ".": "./lib/testa.js"
   },
   "dependencies": {
-    "chai": "^6.2.0",
-    "clean-stack": "^5.3.0",
-    "commander": "^14.0.1",
+    "chai": "^6.2.2",
+    "clean-stack": "^6.0.0",
+    "commander": "^14.0.2",
     "json5": "^2.2.3",
     "listr": "^0.14.3",
     "p-graph": "^1.2.0",
@@ -47,6 +47,6 @@
   },
   "devDependencies": {
     "@momsfriendlydevco/eslint-config": "^2.3.1",
-    "eslint": "^9.37.0"
+    "eslint": "^9.39.2"
   }
 }
