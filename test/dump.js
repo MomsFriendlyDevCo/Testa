@@ -9,10 +9,14 @@ test('dump test', t => {
 });
 
 
-test('dump test (symetric / sorted keys)', t => {
+test('dump test (normalized / sorted keys)', t => {
 	t.dump({
 		foo: 'Foo!',
 		bar: 'Bar!',
 		baz: [1, 2, 3],
-	}, {symetric: true});
+		quz: {
+			moxie: 2,
+			flarp: 1,
+		},
+	}, {normalize: true});
 });
